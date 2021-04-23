@@ -49,9 +49,7 @@ class Piece {
 		this.y = m.y;
 		this.hasMoved = true;
 
-		if (turn === "white") turn = "black";
-		else turn = "white";
-
+		switchTurn();
 		createPieceList();
 		populateBoard();
 	}
@@ -84,10 +82,28 @@ class Pawn extends Piece {
 		if (this.canMove(diagLeft) && this.isEnemy(diagLeft)) moves.push(diagLeft);
 		if (this.canMove(diagRight) && this.isEnemy(diagRight)) moves.push(diagRight);
 
+		//en passant
+		if (lastMove.to && board[lastMove.to.y][lastMove.to.x] instanceof Pawn) {
+			//if it just moved two spaces
+			if (Math.abs(lastMove.to.y - lastMove.from.y) === 2) {
+				const avgY = (lastMove.to.y + lastMove.from.y) / 2;
+				const passingPos = { x: lastMove.to.x, y: avgY };
+				if (diagLeft.y === passingPos.y) {
+					if (diagLeft.x === passingPos.x) moves.push(diagLeft);
+					if (diagRight.x === passingPos.x) moves.push(diagRight);
+				}
+			}
+		}
+
 		return moves;
 	}
 
 	move(m) {
+		//en passant
+		if (m.x !== this.x && board[m.y][m.x] === 0) {
+			board[lastMove.to.y][lastMove.to.x] = 0;
+		}
+		//parent version
 		super.move(m);
 		//promotion
 		if ((this.color === "white" && this.y === 0) || (this.color === "black" && this.y === 7)) {
@@ -194,6 +210,19 @@ class King extends Piece {
 			}
 		}
 		return moves;
+	}
+
+	move(m) {
+		//castling
+		if (Math.abs(m.x - this.x) === 2) {
+			if (m.x > this.x) {
+				board[this.y][7].move({ x: this.x + 1, y: this.y });
+			} else {
+				board[this.y][0].move({ x: this.x - 1, y: this.y });
+			}
+			switchTurn();
+		}
+		super.move(m);
 	}
 }
 

@@ -111,6 +111,10 @@ const drawMoves = (moves, piece) => {
 		const target = board[move.y][move.x];
 		let color = "";
 		if (target !== 0) color = "red";
+		else {
+			//en passant red highlight
+			if (piece instanceof Pawn && piece.x !== move.x) color = "red";
+		}
 		$(`#${move.x}-${move.y}`).append(`<div class="chess-dot ${color}"></div>`);
 		$(`#${move.x}-${move.y}`)
 			.children(".chess-dot")
@@ -148,6 +152,11 @@ const createPieceList = () => {
 			}
 		}
 	}
+};
+
+const switchTurn = () => {
+	if (turn === "white") turn = "black";
+	else turn = "white";
 };
 
 $((ready) => {
