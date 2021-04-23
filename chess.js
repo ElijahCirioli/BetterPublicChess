@@ -101,6 +101,7 @@ const populateBoard = () => {
 		}
 
 		drawLastMove();
+		updateUI();
 	}
 };
 
@@ -124,6 +125,16 @@ const drawLastMove = () => {
 	if (lastMove && lastMove.to) {
 		$(`#${lastMove.to.x}-${lastMove.to.y}`).addClass("highlight");
 		$(`#${lastMove.from.x}-${lastMove.from.y}`).addClass("highlight");
+	}
+};
+
+const updateUI = () => {
+	if (turn === "white") {
+		$("#white-label").show();
+		$("#black-label").hide();
+	} else {
+		$("#black-label").show();
+		$("#white-label").hide();
 	}
 };
 

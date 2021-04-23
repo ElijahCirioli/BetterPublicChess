@@ -28,6 +28,17 @@ class Piece {
 		return target.color !== this.color;
 	}
 
+	getLineMoves(moves, dir) {
+		for (let i = 1; true; i++) {
+			const m = { x: this.x + i * dir.x, y: this.y + i * dir.y };
+			if (this.canMove(m)) {
+				moves.push(m);
+				if (this.isEnemy(m)) break;
+			} else break;
+		}
+		return moves;
+	}
+
 	move(m) {
 		lastMove.from = { x: this.x, y: this.y };
 		lastMove.to = { x: m.x, y: m.y };
@@ -83,6 +94,19 @@ class Knight extends Piece {
 		this.image = `images/${color}-knight.png`;
 		this.type = "knight";
 	}
+
+	getMoves() {
+		let moves = [];
+		for (let xOffset = -2; xOffset <= 2; xOffset++) {
+			for (let yOffset = -2; yOffset <= 2; yOffset++) {
+				if (Math.abs(xOffset) + Math.abs(yOffset) === 3) {
+					const m = { x: this.x + xOffset, y: this.y + yOffset };
+					if (this.canMove(m)) moves.push(m);
+				}
+			}
+		}
+		return moves;
+	}
 }
 
 class Bishop extends Piece {
@@ -90,6 +114,17 @@ class Bishop extends Piece {
 		super(x, y, hasMoved, color);
 		this.image = `images/${color}-bishop.png`;
 		this.type = "bishop";
+	}
+
+	getMoves() {
+		let moves = [];
+
+		this.getLineMoves(moves, { x: 1, y: 1 });
+		this.getLineMoves(moves, { x: -1, y: 1 });
+		this.getLineMoves(moves, { x: 1, y: -1 });
+		this.getLineMoves(moves, { x: -1, y: -1 });
+
+		return moves;
 	}
 }
 
@@ -99,6 +134,17 @@ class Rook extends Piece {
 		this.image = `images/${color}-rook.png`;
 		this.type = "rook";
 	}
+
+	getMoves() {
+		let moves = [];
+
+		this.getLineMoves(moves, { x: 1, y: 0 });
+		this.getLineMoves(moves, { x: -1, y: 0 });
+		this.getLineMoves(moves, { x: 0, y: 1 });
+		this.getLineMoves(moves, { x: 0, y: -1 });
+
+		return moves;
+	}
 }
 
 class King extends Piece {
@@ -107,6 +153,18 @@ class King extends Piece {
 		this.image = `images/${color}-king.png`;
 		this.type = "king";
 	}
+
+	getMoves() {
+		let moves = [];
+		for (let xDir = -1; xDir <= 1; xDir++) {
+			for (let yDir = -1; yDir <= 1; yDir++) {
+				if (yDir === 0 && xDir === 0) continue;
+				const m = { x: this.x + xDir, y: this.y + yDir };
+				if (this.canMove(m)) moves.push(m);
+			}
+		}
+		return moves;
+	}
 }
 
 class Queen extends Piece {
@@ -114,5 +172,16 @@ class Queen extends Piece {
 		super(x, y, hasMoved, color);
 		this.image = `images/${color}-queen.png`;
 		this.type = "queen";
+	}
+
+	getMoves() {
+		let moves = [];
+		for (let xDir = -1; xDir <= 1; xDir++) {
+			for (let yDir = -1; yDir <= 1; yDir++) {
+				if (yDir === 0 && xDir === 0) continue;
+				this.getLineMoves(moves, { x: xDir, y: yDir });
+			}
+		}
+		return moves;
 	}
 }

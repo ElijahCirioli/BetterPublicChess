@@ -1,8 +1,17 @@
+body {
+	background-color: #d6d6d6;
+}
+#chess-wrap {
+	margin: 30px;
+	width: 400px;
+}
 #chess-board {
 	display: grid;
 	gap: 0;
 	grid-template-columns: repeat(8, 50px);
 	grid-template-rows: repeat(8, 50px);
+	width: 100%;
+	margin: 0;
 }
 .tile {
 	display: block;
@@ -51,4 +60,32 @@
 }
 .white.highlight {
 	background-color: #ded162;
+}
+.chess-label {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	font-family: "Comfortaa", sans-serif;
+	font-size: 24px;
+	height: 36px;
+	line-height: 38px;
+	font-weight: lighter;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#white-label {
+	color: black;
+	background-color: white;
+}
+#black-label {
+	color: white;
+	background-color: black;
+}
+#label-wrap {
+	position: relative;
+	height: 34px;
+	width: 100%;
+	margin-bottom: 10px;
 }
