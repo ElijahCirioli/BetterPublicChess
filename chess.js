@@ -50,9 +50,14 @@ const createBoard = () => {
 
 const populateBoard = () => {
 	$(".tile").empty(); //clear out html tiles
-	$(".tile").off("click");
 	$(".tile").css("cursor", "default");
 	$(".tile").removeClass("highlight");
+	$(".tile").off("click");
+	$(".tile").on("click", () => {
+		$(".tile").removeClass("highlight");
+		$(".chess-dot").remove();
+		drawLastMove();
+	});
 
 	//create board array
 	board = [];
@@ -92,8 +97,6 @@ const populateBoard = () => {
 		if (p.color === turn) {
 			$(`#${p.x}-${p.y}`).css("cursor", "pointer");
 			$(`#${p.x}-${p.y}`).on("click", () => {
-				$(".tile").removeClass("highlight");
-				drawLastMove();
 				$(`#${p.x}-${p.y}`).addClass("highlight");
 				const moves = piece.getMoves();
 				drawMoves(moves, piece);
@@ -106,7 +109,6 @@ const populateBoard = () => {
 };
 
 const drawMoves = (moves, piece) => {
-	$(".chess-dot").remove();
 	for (const move of moves) {
 		const target = board[move.y][move.x];
 		let color = "";

@@ -8,6 +8,11 @@
 		<link href="./style.css" rel="stylesheet" type="text/css" media="all" />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+			crossorigin="anonymous"
+		/>
 	</head>
 	<body>
 		<div id="chess-wrap">
@@ -16,6 +21,12 @@
 				<h3 class="chess-label" id="white-label">White's turn</h3>
 			</div>
 			<div id="chess-board"></div>
+			<div id="controls-wrap">
+				<button id="double-back-button"><i class="fas fa-fast-backward"></i></button>
+				<button id="back-button"><i class="fas fa-step-backward"></i></button>
+				<button id="forward-button"><i class="fas fa-step-forward"></i></button>
+				<button id="double-forward-button"><i class="fas fa-fast-forward"></i></button>
+			</div>
 		</div>
 		<script src="pieces.js"></script>
 		<script src="chess.js"></script>
