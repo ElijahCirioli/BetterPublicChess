@@ -11,6 +11,32 @@ class Piece {
 	getMoves() {
 		return [];
 	}
+
+	canMove(m) {
+		if (m.x < 0 || m.x > 7) return false;
+		if (m.y < 0 || m.y > 7) return false;
+		const target = board[m.y][m.x];
+		if (target === 0) return true;
+		return target.color !== this.color;
+	}
+
+	isEnemy(m) {
+		if (m.x < 0 || m.x > 7) return false;
+		if (m.y < 0 || m.y > 7) return false;
+		const target = board[m.y][m.x];
+		if (target === 0) return false;
+		return target.color !== this.color;
+	}
+
+	move(m) {
+		board[this.y][this.x] = 0;
+		board[m.y][m.x] = this;
+		this.x = m.x;
+		this.y = m.y;
+		this.hasMoved = true;
+		createPieceList();
+		populateBoard();
+	}
 }
 
 class Pawn extends Piece {
@@ -23,14 +49,23 @@ class Pawn extends Piece {
 
 	getMoves() {
 		let moves = [];
+
+		//forward moves
 		const single = { x: this.x, y: this.y + this.dir };
-		if (canMove(single, this.color)) {
+		if (this.canMove(single) && !this.isEnemy(single)) {
 			moves.push(single);
 			if (!this.hasMoved) {
 				const double = { x: this.x, y: this.y + 2 * this.dir };
-				if (canMove(double, this.color)) moves.push(double);
+				if (this.canMove(double) && !this.isEnemy(single)) moves.push(double);
 			}
 		}
+
+		//captures
+		const diagLeft = { x: this.x - 1, y: this.y + this.dir };
+		const diagRight = { x: this.x + 1, y: this.y + this.dir };
+		if (this.canMove(diagLeft) && this.isEnemy(diagLeft)) moves.push(diagLeft);
+		if (this.canMove(diagRight) && this.isEnemy(diagRight)) moves.push(diagRight);
+
 		return moves;
 	}
 }

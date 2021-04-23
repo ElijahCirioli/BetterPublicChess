@@ -85,10 +85,11 @@ const populateBoard = () => {
 				break;
 		}
 
-		$(`#${p.x}-${p.y}`).append(`<img src="${board[p.y][p.x].image}" alt="${p.type}">`);
+		const piece = board[p.y][p.x];
+		$(`#${p.x}-${p.y}`).append(`<img src="${piece.image}" alt="${p.type}">`);
 		$(`#${p.x}-${p.y}`).on("click", () => {
-			const moves = board[p.y][p.x].getMoves();
-			drawMoves(moves);
+			const moves = piece.getMoves();
+			drawMoves(moves, piece);
 		});
 		if (p.color === turn) {
 			$(`#${p.x}-${p.y}`).css("cursor", "pointer");
@@ -96,19 +97,32 @@ const populateBoard = () => {
 	}
 };
 
-const drawMoves = (moves) => {
+const drawMoves = (moves, piece) => {
 	$(".chess-dot").remove();
 	for (const move of moves) {
-		$(`#${move.x}-${move.y}`).append("<div class='chess-dot'></div>");
+		const target = board[move.y][move.x];
+		let color = "";
+		if (target !== 0) color = "red";
+		$(`#${move.x}-${move.y}`).append(`<div class="chess-dot ${color}"></div>`);
+		$(`#${move.x}-${move.y}`)
+			.children(".chess-dot")
+			.on("click", (e) => {
+				e.stopPropagation();
+				piece.move(move);
+			});
 	}
 };
 
-const canMove = (move, color) => {
-	if (move.x < 0 || move.x > 7) return false;
-	if (move.y < 0 || move.y > 7) return false;
-	const target = board[move.y][move.x];
-	if (target === 0) return true;
-	return target.color !== color;
+const createPieceList = () => {
+	pieces = [];
+	for (let y = 0; y < 8; y++) {
+		for (let x = 0; x < 8; x++) {
+			const p = board[y][x];
+			if (p instanceof Piece) {
+				pieces.push({ x: p.x, y: p.y, color: p.color, type: p.type, hasMoved: p.hasMoved });
+			}
+		}
+	}
 };
 
 $((ready) => {
