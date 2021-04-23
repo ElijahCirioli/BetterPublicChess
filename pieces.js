@@ -86,6 +86,16 @@ class Pawn extends Piece {
 
 		return moves;
 	}
+
+	move(m) {
+		super.move(m);
+		//promotion
+		if ((this.color === "white" && this.y === 0) || (this.color === "black" && this.y === 7)) {
+			board[this.y][this.x] = new Queen(this.x, this.y, this.hasMoved, this.color);
+			createPieceList();
+			populateBoard();
+		}
+	}
 }
 
 class Knight extends Piece {
@@ -161,6 +171,26 @@ class King extends Piece {
 				if (yDir === 0 && xDir === 0) continue;
 				const m = { x: this.x + xDir, y: this.y + yDir };
 				if (this.canMove(m)) moves.push(m);
+			}
+		}
+
+		//castling
+		if (!this.hasMoved) {
+			let right = board[this.y][7];
+			//make sure the rook hasn't moved
+			if (right instanceof Rook && !right.hasMoved) {
+				//check for empty space between
+				if (board[this.y][5] === 0 && board[this.y][6] === 0) {
+					moves.push({ x: this.x + 2, y: this.y });
+				}
+			}
+			let left = board[this.y][0];
+			//make sure the rook hasn't moved
+			if (left instanceof Rook && !left.hasMoved) {
+				//check for empty space between
+				if (board[this.y][3] === 0 && board[this.y][2] === 0 && board[this.y][1] === 0) {
+					moves.push({ x: this.x - 2, y: this.y });
+				}
 			}
 		}
 		return moves;
