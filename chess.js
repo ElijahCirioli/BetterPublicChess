@@ -4,6 +4,34 @@ let lastMove = { to: undefined, from: undefined };
 let board;
 let turn;
 
+const testForCheck = (testBoard, testColor) => {
+	let king;
+	for (let y = 0; y < 8; y++) {
+		for (let x = 0; x < 8; x++) {
+			const piece = testBoard[y][x];
+			if (piece instanceof King && piece.color === testColor) {
+				king = piece;
+				break;
+			}
+		}
+	}
+	if (!king) return true;
+
+	for (let y = 0; y < 8; y++) {
+		for (let x = 0; x < 8; x++) {
+			const piece = testBoard[y][x];
+			if (piece instanceof Piece && piece.color !== testColor) {
+				const moves = piece.getMoves();
+				for (const m of moves) {
+					if (m.x === king.x && m.y === king.y) return true;
+				}
+			}
+		}
+	}
+
+	return false;
+};
+
 const defaultSetup = () => {
 	pieces = [];
 	pieces.push({ x: 3, y: 0, color: "black", type: "queen", hasMoved: false });
@@ -52,6 +80,7 @@ const populateBoard = () => {
 	$(".tile").empty(); //clear out html tiles
 	$(".tile").css("cursor", "default");
 	$(".tile").removeClass("highlight");
+	$(".tile").removeClass("check");
 	$(".tile").off("click");
 	$(".tile").on("click", () => {
 		$(".tile").removeClass("highlight");
@@ -102,10 +131,20 @@ const populateBoard = () => {
 				drawMoves(moves, piece);
 			});
 		}
-
-		drawLastMove();
-		updateUI();
 	}
+
+	//highlight check
+	for (let y = 0; y < 8; y++) {
+		for (let x = 0; x < 8; x++) {
+			const p = board[y][x];
+			if (p.type === "king" && testForCheck(board, p.color)) {
+				$(`#${p.x}-${p.y}`).addClass("check");
+			}
+		}
+	}
+
+	drawLastMove();
+	updateUI();
 };
 
 const drawMoves = (moves, piece) => {
@@ -115,7 +154,7 @@ const drawMoves = (moves, piece) => {
 		if (target !== 0) color = "red";
 		else {
 			//en passant red highlight
-			if (piece instanceof Pawn && piece.x !== move.x) color = "red";
+			if (piece.type === "pawn" && piece.x !== move.x) color = "red";
 		}
 		$(`#${move.x}-${move.y}`).append(`<div class="chess-dot ${color}"></div>`);
 		$(`#${move.x}-${move.y}`)

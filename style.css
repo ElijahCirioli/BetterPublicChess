@@ -61,6 +61,12 @@ body {
 .white.highlight {
 	background-color: #ded162;
 }
+.check {
+	background-color: #d63a3a;
+}
+.white.check {
+	background-color: #e34949;
+}
 .chess-label {
 	width: 100%;
 	padding: 0;
