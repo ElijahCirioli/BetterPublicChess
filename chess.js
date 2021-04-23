@@ -1,5 +1,6 @@
 let playable = false;
 let pieces = [];
+let lastMove = { to: undefined, from: undefined };
 let board;
 let turn;
 
@@ -51,6 +52,7 @@ const populateBoard = () => {
 	$(".tile").empty(); //clear out html tiles
 	$(".tile").off("click");
 	$(".tile").css("cursor", "default");
+	$(".tile").removeClass("highlight");
 
 	//create board array
 	board = [];
@@ -86,14 +88,19 @@ const populateBoard = () => {
 		}
 
 		const piece = board[p.y][p.x];
-		$(`#${p.x}-${p.y}`).append(`<img src="${piece.image}" alt="${p.type}">`);
-		$(`#${p.x}-${p.y}`).on("click", () => {
-			const moves = piece.getMoves();
-			drawMoves(moves, piece);
-		});
+		$(`#${p.x}-${p.y}`).append(`<img src="${piece.image}" alt="${p.type}" draggable="true">`);
 		if (p.color === turn) {
 			$(`#${p.x}-${p.y}`).css("cursor", "pointer");
+			$(`#${p.x}-${p.y}`).on("click", () => {
+				$(".tile").removeClass("highlight");
+				drawLastMove();
+				$(`#${p.x}-${p.y}`).addClass("highlight");
+				const moves = piece.getMoves();
+				drawMoves(moves, piece);
+			});
 		}
+
+		drawLastMove();
 	}
 };
 
@@ -110,6 +117,13 @@ const drawMoves = (moves, piece) => {
 				e.stopPropagation();
 				piece.move(move);
 			});
+	}
+};
+
+const drawLastMove = () => {
+	if (lastMove && lastMove.to) {
+		$(`#${lastMove.to.x}-${lastMove.to.y}`).addClass("highlight");
+		$(`#${lastMove.from.x}-${lastMove.from.y}`).addClass("highlight");
 	}
 };
 

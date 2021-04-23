@@ -29,11 +29,18 @@ class Piece {
 	}
 
 	move(m) {
+		lastMove.from = { x: this.x, y: this.y };
+		lastMove.to = { x: m.x, y: m.y };
+
 		board[this.y][this.x] = 0;
 		board[m.y][m.x] = this;
 		this.x = m.x;
 		this.y = m.y;
 		this.hasMoved = true;
+
+		if (turn === "white") turn = "black";
+		else turn = "white";
+
 		createPieceList();
 		populateBoard();
 	}
@@ -56,7 +63,7 @@ class Pawn extends Piece {
 			moves.push(single);
 			if (!this.hasMoved) {
 				const double = { x: this.x, y: this.y + 2 * this.dir };
-				if (this.canMove(double) && !this.isEnemy(single)) moves.push(double);
+				if (this.canMove(double) && !this.isEnemy(double)) moves.push(double);
 			}
 		}
 
