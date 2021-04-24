@@ -12,12 +12,7 @@ class Piece {
 		return [];
 	}
 
-	removeCheckMoves(moves, depth, king) {
-		/* this grows super fast but I think I need to do it because 
-		someone can't put themselves in check to put you in check.
-		Calls testForCheck() length of moves * every possible enemy move
-		*/
-		if (depth > 1) return;
+	removeCheckMoves(moves, king) {
 		//find king if needed
 		if (!king) {
 			for (let y = 0; y < 8; y++) {
@@ -41,8 +36,8 @@ class Piece {
 			board[m.y][m.x] = this;
 			this.x = m.x;
 			this.y = m.y;
-			if (this instanceof King) king = this;
-			if (testForCheck(king, depth)) {
+			if (this.type === "king") king = this;
+			if (testForCheck(king)) {
 				moves.splice(i, 1);
 				i--;
 				//castling through check

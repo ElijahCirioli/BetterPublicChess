@@ -4,13 +4,12 @@ let pieces = [];
 let lastMove = { to: undefined, from: undefined };
 let board, turn;
 
-const testForCheck = (king, depth) => {
+const testForCheck = (king) => {
 	for (let y = 0; y < 8; y++) {
 		for (let x = 0; x < 8; x++) {
 			const piece = board[y][x];
 			if (piece instanceof Piece && piece.color !== king.color) {
 				const moves = piece.getMoves();
-				piece.removeCheckMoves(moves, depth + 1, king);
 				for (const m of moves) {
 					if (m.x === king.x && m.y === king.y) return true;
 				}
@@ -27,7 +26,7 @@ const testForCheckmate = (king) => {
 			const piece = board[y][x];
 			if (piece instanceof Piece && piece.color === king.color) {
 				const moves = piece.getMoves();
-				piece.removeCheckMoves(moves, 0, king);
+				piece.removeCheckMoves(moves);
 				if (moves.length > 0) return false;
 			}
 		}
@@ -100,7 +99,7 @@ const populateBoard = () => {
 	$(".tile").css("cursor", "default");
 	$(".tile").removeClass("highlight");
 	$(".tile").removeClass("check");
-	$(".tile").off("mousedown");
+	$(".tile").off("mousedown ondragstart");
 	$(".tile").on("mousedown", () => {
 		$(".tile").removeClass("highlight");
 		$(".chess-dot").remove();
@@ -150,7 +149,7 @@ const populateBoard = () => {
 			$(`#${p.x}-${p.y}`).on("mousedown ondragstart", () => {
 				$(`#${p.x}-${p.y}`).addClass("highlight");
 				const moves = piece.getMoves();
-				piece.removeCheckMoves(moves, 0);
+				piece.removeCheckMoves(moves, undefined);
 				drawMoves(moves, piece);
 			});
 		}
@@ -160,7 +159,7 @@ const populateBoard = () => {
 	for (let y = 0; y < 8; y++) {
 		for (let x = 0; x < 8; x++) {
 			const p = board[y][x];
-			if (p.type === "king" && testForCheck(p, 0)) {
+			if (p.type === "king" && testForCheck(p)) {
 				if (p.color === turn) check = true;
 				$(`#${p.x}-${p.y}`).addClass("check");
 				if (testForCheckmate(p)) {
