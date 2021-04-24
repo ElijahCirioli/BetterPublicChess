@@ -36,11 +36,7 @@ class Piece {
 		for (let i = 0; i < moves.length; i++) {
 			const m = { ...moves[i] };
 			const copy = copyBoard();
-
-			//castling through check
-			if (this instanceof King && Math.abs(m.x - this.x) === 2) {
-				m.x = (m.x + this.x) / 2;
-			}
+			let flag = false;
 
 			board[this.y][this.x] = 0;
 			board[m.y][m.x] = this;
@@ -50,10 +46,30 @@ class Piece {
 			if (testForCheck(king, depth)) {
 				moves.splice(i, 1);
 				i--;
+				flag = true;
 			}
 			board = copy;
 			this.x = backup.x;
 			this.y = backup.y;
+
+			//castling through check (lot of repeated code I need to try and fix this)
+			if (!flag && this instanceof King && Math.abs(m.x - this.x) === 2) {
+				m.x = (m.x + this.x) / 2;
+				const newCopy = copyBoard();
+
+				board[this.y][this.x] = 0;
+				board[m.y][m.x] = this;
+				this.x = m.x;
+				this.y = m.y;
+				if (this instanceof King) king = this;
+				if (testForCheck(king, depth)) {
+					moves.splice(i, 1);
+					i--;
+				}
+				board = newCopy;
+				this.x = backup.x;
+				this.y = backup.y;
+			}
 		}
 	}
 
