@@ -1,35 +1,53 @@
 let playable = false;
+let check = false;
 let pieces = [];
 let lastMove = { to: undefined, from: undefined };
-let board;
-let turn;
+let board, turn;
 
-const testForCheck = (testBoard, testColor) => {
-	let king;
+const testForCheck = (king, depth) => {
 	for (let y = 0; y < 8; y++) {
 		for (let x = 0; x < 8; x++) {
-			const piece = testBoard[y][x];
-			if (piece instanceof King && piece.color === testColor) {
-				king = piece;
-				break;
-			}
-		}
-	}
-	if (!king) return true;
-
-	for (let y = 0; y < 8; y++) {
-		for (let x = 0; x < 8; x++) {
-			const piece = testBoard[y][x];
-			if (piece instanceof Piece && piece.color !== testColor) {
+			const piece = board[y][x];
+			if (piece instanceof Piece && piece.color !== king.color) {
 				const moves = piece.getMoves();
+				piece.removeCheckMoves(moves, depth + 1, king);
 				for (const m of moves) {
 					if (m.x === king.x && m.y === king.y) return true;
 				}
 			}
 		}
 	}
-
 	return false;
+};
+
+const testForCheckmate = (king) => {
+	/* assumes king is already in check */
+	for (let y = 0; y < 8; y++) {
+		for (let x = 0; x < 8; x++) {
+			const piece = board[y][x];
+			if (piece instanceof Piece && piece.color === king.color) {
+				const moves = piece.getMoves();
+				piece.removeCheckMoves(moves, 0, king);
+				if (moves.length > 0) return false;
+			}
+		}
+	}
+	return true;
+};
+
+const copyBoard = () => {
+	const copy = [];
+	for (let y = 0; y < 8; y++) {
+		let row = [];
+		for (let x = 0; x < 8; x++) {
+			let orig = board[y][x];
+			if (orig === 0) row.push(0);
+			//this line is wild but that's the best way I could come up with to clone the class object
+			else row.push(Object.assign(Object.create(Object.getPrototypeOf(orig)), orig));
+		}
+		copy.push(row);
+	}
+	return copy;
 };
 
 const defaultSetup = () => {
@@ -77,7 +95,8 @@ const createBoard = () => {
 };
 
 const populateBoard = () => {
-	$(".tile").empty(); //clear out html tiles
+	//reset html
+	$(".tile").empty();
 	$(".tile").css("cursor", "default");
 	$(".tile").removeClass("highlight");
 	$(".tile").removeClass("check");
@@ -87,6 +106,9 @@ const populateBoard = () => {
 		$(".chess-dot").remove();
 		drawLastMove();
 	});
+
+	//I actually need this flag exclusively for castling out of check
+	check = false;
 
 	//create board array
 	board = [];
@@ -128,6 +150,7 @@ const populateBoard = () => {
 			$(`#${p.x}-${p.y}`).on("click", () => {
 				$(`#${p.x}-${p.y}`).addClass("highlight");
 				const moves = piece.getMoves();
+				piece.removeCheckMoves(moves, 0);
 				drawMoves(moves, piece);
 			});
 		}
@@ -137,8 +160,12 @@ const populateBoard = () => {
 	for (let y = 0; y < 8; y++) {
 		for (let x = 0; x < 8; x++) {
 			const p = board[y][x];
-			if (p.type === "king" && testForCheck(board, p.color)) {
+			if (p.type === "king" && testForCheck(p, 0)) {
+				if (p.color === turn) check = true;
 				$(`#${p.x}-${p.y}`).addClass("check");
+				if (testForCheckmate(p)) {
+					alert("mate in 0");
+				}
 			}
 		}
 	}
@@ -161,6 +188,7 @@ const drawMoves = (moves, piece) => {
 			.children(".chess-dot")
 			.on("click", (e) => {
 				e.stopPropagation();
+				switchTurn();
 				piece.move(move);
 			});
 	}

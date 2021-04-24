@@ -12,6 +12,51 @@ class Piece {
 		return [];
 	}
 
+	removeCheckMoves(moves, depth, king) {
+		/* this grows super fast but I think I need to do it because 
+		someone can't put themselves in check to put you in check.
+		Calls testForCheck() length of moves * every possible enemy move
+		*/
+		if (depth > 1) return;
+		//find king if needed
+		if (!king) {
+			for (let y = 0; y < 8; y++) {
+				for (let x = 0; x < 8; x++) {
+					const piece = board[y][x];
+					if (piece instanceof King && piece.color === this.color) {
+						king = piece;
+						break;
+					}
+				}
+			}
+		}
+
+		//remove check moves
+		const backup = { x: this.x, y: this.y };
+		for (let i = 0; i < moves.length; i++) {
+			const m = { ...moves[i] };
+			const copy = copyBoard();
+
+			//castling through check
+			if (this instanceof King && Math.abs(m.x - this.x) === 2) {
+				m.x = (m.x + this.x) / 2;
+			}
+
+			board[this.y][this.x] = 0;
+			board[m.y][m.x] = this;
+			this.x = m.x;
+			this.y = m.y;
+			if (this instanceof King) king = this;
+			if (testForCheck(king, depth)) {
+				moves.splice(i, 1);
+				i--;
+			}
+			board = copy;
+			this.x = backup.x;
+			this.y = backup.y;
+		}
+	}
+
 	canMove(m) {
 		if (m.x < 0 || m.x > 7) return false;
 		if (m.y < 0 || m.y > 7) return false;
@@ -49,7 +94,6 @@ class Piece {
 		this.y = m.y;
 		this.hasMoved = true;
 
-		switchTurn();
 		createPieceList();
 		populateBoard();
 	}
@@ -94,7 +138,6 @@ class Pawn extends Piece {
 				}
 			}
 		}
-
 		return moves;
 	}
 
@@ -191,7 +234,7 @@ class King extends Piece {
 		}
 
 		//castling
-		if (!this.hasMoved) {
+		if (!this.hasMoved && !check) {
 			let right = board[this.y][7];
 			//make sure the rook hasn't moved
 			if (right instanceof Rook && !right.hasMoved) {
@@ -220,7 +263,6 @@ class King extends Piece {
 			} else {
 				board[this.y][0].move({ x: this.x - 1, y: this.y });
 			}
-			switchTurn();
 		}
 		super.move(m);
 	}
