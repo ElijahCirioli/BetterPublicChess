@@ -100,14 +100,14 @@ const populateBoard = () => {
 	$(".tile").css("cursor", "default");
 	$(".tile").removeClass("highlight");
 	$(".tile").removeClass("check");
-	$(".tile").off("click");
-	$(".tile").on("click", () => {
+	$(".tile").off("mousedown");
+	$(".tile").on("mousedown", () => {
 		$(".tile").removeClass("highlight");
 		$(".chess-dot").remove();
 		drawLastMove();
 	});
 
-	//I actually need this flag exclusively for castling out of check
+	//I actually need this flag exclusively for castling out of check it kinda sucks
 	check = false;
 
 	//create board array
@@ -147,7 +147,7 @@ const populateBoard = () => {
 		$(`#${p.x}-${p.y}`).append(`<img src="${piece.image}" alt="${p.type}" draggable="true">`);
 		if (p.color === turn) {
 			$(`#${p.x}-${p.y}`).css("cursor", "pointer");
-			$(`#${p.x}-${p.y}`).on("click", () => {
+			$(`#${p.x}-${p.y}`).on("mousedown ondragstart", () => {
 				$(`#${p.x}-${p.y}`).addClass("highlight");
 				const moves = piece.getMoves();
 				piece.removeCheckMoves(moves, 0);
@@ -186,10 +186,15 @@ const drawMoves = (moves, piece) => {
 		$(`#${move.x}-${move.y}`).append(`<div class="chess-dot ${color}"></div>`);
 		$(`#${move.x}-${move.y}`)
 			.children(".chess-dot")
-			.on("click", (e) => {
+			.on("mousedown drop", (e) => {
 				e.stopPropagation();
 				switchTurn();
 				piece.move(move);
+			});
+		$(`#${move.x}-${move.y}`)
+			.children(".chess-dot")
+			.on("dragover", (e) => {
+				e.preventDefault();
 			});
 	}
 };
