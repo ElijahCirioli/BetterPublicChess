@@ -241,4 +241,11 @@ const switchTurn = () => {
 
 $((ready) => {
 	createBoard();
+
+	$("#eye-button").on("mousedown", () => {
+		$("#winner-wrap").css("opacity", "0");
+	});
+	$("#winner-wrap").on("mouseup mouseleave", () => {
+		$("#winner-wrap").css("opacity", "1");
+	});
 });
