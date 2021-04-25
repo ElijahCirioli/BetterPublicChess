@@ -79,6 +79,7 @@ const defaultSetup = () => {
 	}
 
 	turn = "white";
+	lastMove = { from: undefined, to: undefined };
 };
 
 const createBoard = () => {

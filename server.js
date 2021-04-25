@@ -27,6 +27,7 @@ const startListener = () => {
 			const frame = game[turnNumber];
 			pieces = frame.pieces;
 			turn = frame.turn;
+			lastMove = frame.lastMove;
 		} else {
 			turnNumber = 0;
 			defaultSetup();
@@ -48,6 +49,7 @@ const postData = () => {
 	database.ref(`/games/${gameNumber}/${turnNumber}/`).set({
 		pieces: pieces,
 		turn: turn,
+		lastMove: lastMove,
 	});
 };
 
