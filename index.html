@@ -20,7 +20,15 @@
 				<h3 class="chess-label" id="black-label">Black's turn</h3>
 				<h3 class="chess-label" id="white-label">White's turn</h3>
 			</div>
-			<div id="chess-board"></div>
+			<div id="board-wrap">
+				<div id="chess-board"></div>
+				<div id="winner-wrap" hidden>
+					<h3 id="checkmate-label">Checkmate!</h3>
+					<h3 class="winner-label" id="white-winner-label">White wins</h3>
+					<h3 class="winner-label" id="black-winner-label">Black wins</h3>
+					<button id="new-game-button">New game</button>
+				</div>
+			</div>
 			<div id="controls-wrap">
 				<button id="double-back-button"><i class="fas fa-fast-backward"></i></button>
 				<button id="back-button"><i class="fas fa-step-backward"></i></button>
@@ -28,7 +36,29 @@
 				<button id="double-forward-button"><i class="fas fa-fast-forward"></i></button>
 			</div>
 		</div>
+		<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-analytics.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-database.js"></script>
+		<script>
+			// Your web app's Firebase configuration
+			// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+			var firebaseConfig = {
+				apiKey: "AIzaSyCNSfJ-7AXFxjQ7TQMn5AHjlBvNZxaouC8",
+				authDomain: "public-chess.firebaseapp.com",
+				databaseURL: "https://public-chess-default-rtdb.firebaseio.com",
+				projectId: "public-chess",
+				storageBucket: "public-chess.appspot.com",
+				messagingSenderId: "386690898588",
+				appId: "1:386690898588:web:2a427dc056a0695b4c2b59",
+				measurementId: "G-56GHY50ZP1",
+			};
+			// Initialize Firebase
+			firebase.initializeApp(firebaseConfig);
+			firebase.analytics();
+		</script>
+
 		<script src="pieces.js"></script>
 		<script src="chess.js"></script>
+		<script src="server.js"></script>
 	</body>
 </html>

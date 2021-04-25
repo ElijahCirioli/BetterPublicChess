@@ -93,9 +93,6 @@ class Piece {
 		this.x = m.x;
 		this.y = m.y;
 		this.hasMoved = true;
-
-		createPieceList();
-		populateBoard();
 	}
 }
 

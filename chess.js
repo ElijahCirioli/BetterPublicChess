@@ -3,6 +3,7 @@ let check = false;
 let pieces = [];
 let lastMove = { to: undefined, from: undefined };
 let board, turn;
+let winHistory, gameNumber, turnNumber, listener;
 
 const testForCheck = (king) => {
 	for (let y = 0; y < 8; y++) {
@@ -90,7 +91,6 @@ const createBoard = () => {
 			board.append(`<div id="${x}-${y}" class="tile ${color}"><div>`);
 		}
 	}
-	populateBoard();
 };
 
 const populateBoard = () => {
@@ -105,6 +105,7 @@ const populateBoard = () => {
 		$(".chess-dot").remove();
 		drawLastMove();
 	});
+	$("#winner-wrap").hide();
 
 	//I actually need this flag exclusively for castling out of check it kinda sucks
 	check = false;
@@ -163,7 +164,8 @@ const populateBoard = () => {
 				if (p.color === turn) check = true;
 				$(`#${p.x}-${p.y}`).addClass("check");
 				if (testForCheckmate(p)) {
-					alert("mate in 0");
+					const winnerColor = p.color === "white" ? "black" : "white";
+					displayWinner(winnerColor);
 				}
 			}
 		}
@@ -189,6 +191,8 @@ const drawMoves = (moves, piece) => {
 				e.stopPropagation();
 				switchTurn();
 				piece.move(move);
+				createPieceList();
+				postData();
 			});
 		$(`#${move.x}-${move.y}`)
 			.children(".chess-dot")
@@ -215,16 +219,18 @@ const updateUI = () => {
 	}
 };
 
-const createPieceList = () => {
-	pieces = [];
-	for (let y = 0; y < 8; y++) {
-		for (let x = 0; x < 8; x++) {
-			const p = board[y][x];
-			if (p instanceof Piece) {
-				pieces.push({ x: p.x, y: p.y, color: p.color, type: p.type, hasMoved: p.hasMoved });
-			}
-		}
+const displayWinner = (winner) => {
+	$("#winner-wrap").show();
+	$(".winner-label").hide();
+	if (winner === "white") {
+		$("#white-winner-label").show();
+	} else {
+		$("#black-winner-label").show();
 	}
+	$("#new-game-button").off("click");
+	$("#new-game-button").on("click", () => {
+		postWin(winner);
+	});
 };
 
 const switchTurn = () => {
@@ -233,6 +239,5 @@ const switchTurn = () => {
 };
 
 $((ready) => {
-	defaultSetup();
 	createBoard();
 });
