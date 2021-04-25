@@ -1,7 +1,7 @@
 let playable = false;
 let check = false;
 let pieces = [];
-let lastMove = { to: undefined, from: undefined };
+let lastMove = { to: { x: -1, y: -1 }, from: { x: -1, y: -1 } };
 let board, turn;
 let winHistory, gameNumber, turnNumber, listener;
 
@@ -79,7 +79,7 @@ const defaultSetup = () => {
 	}
 
 	turn = "white";
-	lastMove = { from: undefined, to: undefined };
+	lastMove = { from: { x: -1, y: -1 }, to: { x: -1, y: -1 } };
 };
 
 const createBoard = () => {
@@ -204,7 +204,7 @@ const drawMoves = (moves, piece) => {
 };
 
 const drawLastMove = () => {
-	if (lastMove && lastMove.to) {
+	if (lastMove && lastMove.to.x >= 0) {
 		$(`#${lastMove.to.x}-${lastMove.to.y}`).addClass("highlight");
 		$(`#${lastMove.from.x}-${lastMove.from.y}`).addClass("highlight");
 	}

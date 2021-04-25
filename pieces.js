@@ -124,7 +124,7 @@ class Pawn extends Piece {
 		if (this.canMove(diagRight) && this.isEnemy(diagRight)) moves.push(diagRight);
 
 		//en passant
-		if (lastMove.to && board[lastMove.to.y][lastMove.to.x] instanceof Pawn) {
+		if (lastMove.to.x >= 0 && board[lastMove.to.y][lastMove.to.x] instanceof Pawn) {
 			//if it just moved two spaces
 			if (Math.abs(lastMove.to.y - lastMove.from.y) === 2) {
 				const avgY = (lastMove.to.y + lastMove.from.y) / 2;

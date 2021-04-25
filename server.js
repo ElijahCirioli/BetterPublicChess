@@ -45,8 +45,8 @@ const endListener = () => {
 };
 
 const postData = () => {
-	if (turnNumber === undefined) turnNumber = 0;
-	database.ref(`/games/${gameNumber}/${turnNumber}/`).set({
+	if (turnNumber === undefined) turnNumber = -1;
+	database.ref(`/games/${gameNumber}/${turnNumber + 1}/`).set({
 		pieces: pieces,
 		turn: turn,
 		lastMove: lastMove,
