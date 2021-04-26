@@ -279,3 +279,9 @@ body {
 #flag-button:active {
 	transform: scale(0.97);
 }
+#new-icon {
+	float: right;
+	margin-right: 5px;
+	cursor: pointer;
+	transition: color 0.2s ease-in;
+}

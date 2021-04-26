@@ -20,13 +20,24 @@ const updateWinHistory = () => {
 const startListener = () => {
 	endListener();
 	const jump = turnNumber === undefined || turnNumber === maxTurnNumber;
+
 	if (gameNumber === undefined) return; //we don't know what we're actually looking for
 
 	listener = database.ref(`/games/${gameNumber}/`).on("value", (snapshot) => {
 		if (snapshot.exists()) {
 			const game = snapshot.val();
+
+			//show alert icon
+			if (game.length - 1 > maxTurnNumber) {
+				$("#new-icon").css("color", "#fac446");
+				$("#new-icon").show();
+				setTimeout(() => {
+					$("#new-icon").css("color", "#ebebeb");
+				}, 1000);
+			}
 			maxTurnNumber = game.length - 1;
 			if (jump) turnNumber = maxTurnNumber;
+
 			const frame = game[turnNumber];
 			pieces = frame.pieces;
 			turn = frame.turn;

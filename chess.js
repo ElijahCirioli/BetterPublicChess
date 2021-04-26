@@ -98,6 +98,7 @@ const createBoard = () => {
 const populateBoard = () => {
 	//are we viewing an up to date turn
 	const current = maxGameNumber === gameNumber && maxTurnNumber === turnNumber;
+	console.log(current);
 	//reset html
 	$(".tile").empty();
 	$(".tile").css("cursor", "default");
@@ -229,7 +230,8 @@ const updateUI = () => {
 		$("#number-icon").text(`Game ${gameNumber + 1} Turn ${turnNumber}`);
 		$("#date-icon").hide();
 		$("#lock-icon").hide();
-		$("flag-button").show();
+		$("#new-icon").hide();
+		$("#flag-button").show();
 		$("#chess-board").css("outline", "none");
 	} else {
 		//in the past
@@ -288,6 +290,9 @@ $((ready) => {
 	$("#flag-button").click(() => {
 		const winnerColor = turn === "white" ? "black" : "white";
 		displayWinner(winnerColor, true);
+	});
+	$("#new-icon").click(() => {
+		$("#double-forward-button").click();
 	});
 
 	//timeline buttons
