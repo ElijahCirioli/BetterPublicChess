@@ -1,18 +1,19 @@
 const database = firebase.database();
 
 const updateWinHistory = () => {
+	endListener();
+	const jump = gameNumber === undefined || gameNumber === maxGameNumber;
+
 	database.ref("/win-history/").on("value", (snapshot) => {
 		if (snapshot.exists()) {
 			winHistory = snapshot.val();
-			endListener();
-
 			//get the number for our current game
 			maxGameNumber = winHistory.length;
 		} else {
 			//we have no games stored in the history
 			maxGameNumber = 0;
 		}
-		gameNumber = maxGameNumber;
+		if (jump) gameNumber = maxGameNumber;
 		startListener();
 	});
 };
@@ -29,7 +30,7 @@ const startListener = () => {
 			const game = snapshot.val();
 
 			//show alert icon
-			if (game.length - 1 > maxTurnNumber) {
+			if (game.length - 1 > maxTurnNumber && gameNumber === maxGameNumber) {
 				$("#new-icon").css("color", "#fac446");
 				$("#new-icon").show();
 				setTimeout(() => {

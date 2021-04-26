@@ -244,6 +244,7 @@ const updateUI = () => {
 	}
 
 	updateButtons();
+	displayWinHistory();
 };
 
 const displayWinner = (winner, resigned) => {
@@ -288,6 +289,39 @@ const updateButtons = () => {
 		$("#double-back-button").addClass("disabled");
 		$("#back-button").addClass("disabled");
 	}
+};
+
+const displayWinHistory = () => {
+	$("#scroll-container").empty();
+	$("#scroll-container").append(`<div class="past-game current-game"></div>`);
+	$("#scroll-container")
+		.children()
+		.last()
+		.click(() => {
+			endListener();
+			gameNumber = maxGameNumber;
+			turnNumber = 1;
+			maxTurnNumber = 1;
+			startListener();
+		});
+	for (let i = winHistory.length - 1; i >= 0; i--) {
+		const game = winHistory[i];
+		$("#scroll-container").append(`<div class="past-game past-${game}"></div>`);
+		$("#scroll-container")
+			.children()
+			.last()
+			.click(function () {
+				endListener();
+				gameNumber = i;
+				turnNumber = 1;
+				maxTurnNumber = 0;
+				startListener();
+			});
+	}
+	$("#scroll-container")
+		.children()
+		.eq(winHistory.length - gameNumber)
+		.addClass("active-past-game");
 };
 
 $((ready) => {

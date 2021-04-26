@@ -286,3 +286,80 @@ body {
 	cursor: pointer;
 	transition: color 0.2s ease-in;
 }
+#history-wrap {
+	margin: 15px auto 0 auto;
+	width: 100%;
+	overflow: hidden;
+}
+#history-label {
+	color: #ebebeb;
+	text-shadow: 2px 2px 3px black;
+	width: 100%;
+	margin: 0 0 -4px 0;
+	text-align: center;
+	font-family: "Comfortaa", sans-serif;
+	font-size: 22px;
+	font-weight: lighter;
+}
+#scroll-container {
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	display: flex;
+	flex-direction: row-reverse;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	padding: 5px 0;
+	margin: 0 auto;
+	scroll-snap-type: x mandatory;
+	align-items: center;
+}
+#scroll-container::after {
+	content: "";
+	min-width: 5px;
+	max-width: 5px;
+	height: 100%;
+}
+.past-game {
+	min-width: 30px;
+	min-height: 30px;
+	max-width: 30px;
+	max-height: 30px;
+	margin: 0 3px;
+	border: 2px solid #969696;
+	cursor: pointer;
+	border-radius: 3px;
+	display: inline-block;
+}
+.past-black {
+	background-color: black;
+}
+.past-white {
+	background-color: white;
+}
+.current-game {
+	background: repeating-linear-gradient(45deg, #e3e3e3, #e3e3e3 5px, #474747 5px, #474747 10px);
+}
+#timeline-wrap {
+	max-width: 100%;
+	overflow: hidden;
+	display: flex;
+	margin: 7px auto;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: nowrap;
+}
+.timeline-label {
+	color: #ebebeb;
+	text-shadow: 2px 2px 3px black;
+	margin: 0 4px;
+	text-align: center;
+	font-family: "Comfortaa", sans-serif;
+	font-size: 18px;
+	line-height: 40px;
+	font-weight: lighter;
+}
+.active-past-game {
+	border: 2px solid #608c53;
+	box-shadow: 0 0 5px 3px rgba(255, 255, 255, 0.8);
+}
