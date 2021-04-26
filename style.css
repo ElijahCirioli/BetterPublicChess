@@ -132,6 +132,7 @@ body {
 	transform: none !important;
 	background-color: #808080 !important;
 	color: #cccccc !important;
+	cursor: default !important;
 }
 #board-wrap {
 	position: relative;

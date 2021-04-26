@@ -225,9 +225,11 @@ const updateUI = () => {
 		$("#white-label").hide();
 	}
 	//update icons bar
+	console.log(turnNumber);
+	const displayTurn = Math.floor(turnNumber / 2); //still needs work
+	$("#number-icon").text(`Game ${gameNumber + 1} Turn ${displayTurn}`);
 	if (current) {
 		//up to date
-		$("#number-icon").text(`Game ${gameNumber + 1} Turn ${turnNumber}`);
 		$("#date-icon").hide();
 		$("#lock-icon").hide();
 		$("#new-icon").hide();
@@ -235,7 +237,6 @@ const updateUI = () => {
 		$("#chess-board").css("outline", "none");
 	} else {
 		//in the past
-		$("#number-icon").text(`Game ${gameNumber + 1} Turn ${turnNumber}`);
 		$("#date-icon").show();
 		$("#date-icon").text(viewDate);
 		$("#lock-icon").show();
@@ -276,7 +277,17 @@ const switchTurn = () => {
 	else turn = "white";
 };
 
-const updateButtons = () => {};
+const updateButtons = () => {
+	$("#controls-wrap").children("button").removeClass("disabled");
+	if (turnNumber === maxTurnNumber) {
+		$("#double-forward-button").addClass("disabled");
+		$("#forward-button").addClass("disabled");
+	}
+	if (turnNumber === 1) {
+		$("#double-back-button").addClass("disabled");
+		$("#back-button").addClass("disabled");
+	}
+};
 
 $((ready) => {
 	createBoard();
