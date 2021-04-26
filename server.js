@@ -8,10 +8,12 @@ const updateWinHistory = () => {
 
 			//get the number for our current game
 			gameNumber = winHistory.length;
+			viewGameNumber = gameNumber;
 			startListener();
 		} else {
 			//we have no games stored in the history
 			gameNumber = 0;
+			viewGameNumber = 0;
 			startListener();
 		}
 	});
@@ -28,11 +30,14 @@ const startListener = () => {
 			pieces = frame.pieces;
 			turn = frame.turn;
 			lastMove = frame.lastMove;
+			viewDate = frame.date ? frame.date : getDateString();
 		} else {
 			turnNumber = 0;
+			viewDate = getDateString();
 			defaultSetup();
 			postData();
 		}
+		viewTurnNumber = turnNumber;
 		populateBoard();
 	});
 };
@@ -46,10 +51,12 @@ const endListener = () => {
 
 const postData = () => {
 	if (turnNumber === undefined) turnNumber = -1;
+	const date = getDateString();
 	database.ref(`/games/${gameNumber}/${turnNumber + 1}/`).set({
 		pieces: pieces,
 		turn: turn,
 		lastMove: lastMove,
+		date: date,
 	});
 };
 
@@ -69,6 +76,12 @@ const createPieceList = () => {
 			}
 		}
 	}
+};
+
+const getDateString = () => {
+	const d = new Date();
+	const str = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+	return str;
 };
 
 $((ready) => {

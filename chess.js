@@ -3,7 +3,9 @@ let check = false;
 let pieces = [];
 let lastMove = { to: { x: -1, y: -1 }, from: { x: -1, y: -1 } };
 let board, turn;
-let winHistory, gameNumber, turnNumber, listener;
+let winHistory, listener;
+let gameNumber, turnNumber;
+let viewGameNumber, viewTurnNumber, viewDate;
 
 const testForCheck = (king) => {
 	for (let y = 0; y < 8; y++) {
@@ -166,7 +168,7 @@ const populateBoard = () => {
 				$(`#${p.x}-${p.y}`).addClass("check");
 				if (testForCheckmate(p)) {
 					const winnerColor = p.color === "white" ? "black" : "white";
-					displayWinner(winnerColor);
+					displayWinner(winnerColor, false);
 				}
 			}
 		}
@@ -218,15 +220,40 @@ const updateUI = () => {
 		$("#black-label").show();
 		$("#white-label").hide();
 	}
+	//update icons bar
+	$("#number-icon").text(`Game ${viewGameNumber + 1} Turn ${viewTurnNumber + 1}`);
+	if (viewGameNumber === gameNumber && viewTurnNumber === turnNumber) {
+		//up to date
+		$("#date-icon").hide();
+		$("#lock-icon").hide();
+		$("flag-button").show();
+		$("#chess-board").css("outline", "none");
+	} else {
+		//in the past
+		$("#date-icon").show();
+		$("#date-icon").text(viewDate);
+		$("#lock-icon").show();
+		$("flag-button").hide();
+		$("#chess-board").css("outline", "4px dashed #808080");
+	}
 };
 
-const displayWinner = (winner) => {
+const displayWinner = (winner, resigned) => {
 	$("#winner-wrap").show();
 	$(".winner-label").hide();
+	$("#flag-button").hide();
+	$(".tile").off("mousedown ondragstart");
 	if (winner === "white") {
 		$("#white-winner-label").show();
 	} else {
 		$("#black-winner-label").show();
+	}
+	if (resigned) {
+		$("#checkmate-label").hide();
+		$("#resignation-label").show();
+	} else {
+		$("#checkmate-label").show();
+		$("#resignation-label").hide();
 	}
 	$("#new-game-button").off("click");
 	$("#new-game-button").on("click", () => {
@@ -247,5 +274,9 @@ $((ready) => {
 	});
 	$("#winner-wrap").on("mouseup mouseleave", () => {
 		$("#winner-wrap").css("opacity", "1");
+	});
+	$("#flag-button").click(() => {
+		const winnerColor = turn === "white" ? "black" : "white";
+		displayWinner(winnerColor, true);
 	});
 });

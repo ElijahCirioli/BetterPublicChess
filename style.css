@@ -1,5 +1,9 @@
+html {
+	background-image: linear-gradient(to bottom, #ccdadb, #b5c6c7);
+	min-height: 100vh;
+}
 body {
-	background-color: #d6d6d6;
+	margin: 0;
 }
 #chess-wrap {
 	margin: 30px;
@@ -171,6 +175,17 @@ body {
 	font-weight: lighter;
 	font-style: italic;
 }
+#resignation-label {
+	color: #ebebeb;
+	text-shadow: 2px 2px 4px black;
+	width: fit-content;
+	margin: 100px auto 0 auto;
+	text-align: center;
+	font-family: "Comfortaa", sans-serif;
+	font-size: 26px;
+	font-weight: lighter;
+	font-style: italic;
+}
 #new-game-button {
 	display: block;
 	width: 50%;
@@ -207,4 +222,60 @@ body {
 	font-size: 36px;
 	padding: 0;
 	text-shadow: 2px 2px 4px black;
+}
+#icons-wrap {
+	width: calc(100% - 30px);
+	height: 36px;
+	background-color: #2e2e2e;
+	margin-bottom: 10px;
+	display: block;
+	padding: 0 15px;
+}
+.icon {
+	display: inline;
+	height: 100%;
+	margin: 0;
+	font-family: "Comfortaa", sans-serif;
+	color: #ebebeb;
+	float: left;
+	font-weight: lighter;
+	font-size: 18px;
+	line-height: 36px;
+}
+#lock-icon {
+	font-size: 20px;
+}
+#date-icon {
+	color: #d1d1d1;
+	text-align: left;
+	margin-left: 10px;
+}
+#number-icon {
+	float: right;
+	text-align: right;
+}
+#people-icon-wrap {
+	float: right;
+}
+#flag-icon {
+	font-size: 16px;
+	height: 26px;
+	line-height: 26px;
+}
+#flag-button {
+	background-color: #608c53;
+	border: none;
+	cursor: pointer;
+	text-shadow: 2px 2px 4px black;
+	box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5);
+	transition: 0.1s;
+	border-radius: 5px;
+	padding: 0 8px;
+	margin-top: 5px;
+}
+#flag-button:hover {
+	transform: scale(1.05);
+}
+#flag-button:active {
+	transform: scale(0.97);
 }
