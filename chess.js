@@ -98,7 +98,7 @@ const createBoard = () => {
 const populateBoard = () => {
 	//are we viewing an up to date turn
 	const current = maxGameNumber === gameNumber && maxTurnNumber === turnNumber;
-	console.log(current);
+
 	//reset html
 	$(".tile").empty();
 	$(".tile").css("cursor", "default");
@@ -225,8 +225,7 @@ const updateUI = () => {
 		$("#white-label").hide();
 	}
 	//update icons bar
-	console.log(turnNumber);
-	const displayTurn = Math.floor(turnNumber / 2); //still needs work
+	const displayTurn = Math.floor((turnNumber - 1) / 2) + 1; //still needs work
 	$("#number-icon").text(`Game ${gameNumber + 1} Turn ${displayTurn}`);
 	if (current) {
 		//up to date
