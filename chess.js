@@ -1,11 +1,10 @@
-let playable = false;
 let check = false;
 let pieces = [];
 let lastMove = { to: { x: -1, y: -1 }, from: { x: -1, y: -1 } };
 let board, turn;
 let winHistory, listener;
 let gameNumber, turnNumber;
-let viewGameNumber, viewTurnNumber, viewDate;
+let maxGameNumber, maxTurnNumber, viewDate;
 
 const testForCheck = (king) => {
 	for (let y = 0; y < 8; y++) {
@@ -97,19 +96,22 @@ const createBoard = () => {
 };
 
 const populateBoard = () => {
+	//are we viewing an up to date turn
+	const current = maxGameNumber === gameNumber && maxTurnNumber === turnNumber;
 	//reset html
 	$(".tile").empty();
 	$(".tile").css("cursor", "default");
 	$(".tile").removeClass("highlight");
 	$(".tile").removeClass("check");
-	$(".tile").off("mousedown ondragstart");
-	$(".tile").on("mousedown", () => {
-		$(".tile").removeClass("highlight");
-		$(".chess-dot").remove();
-		drawLastMove();
-	});
 	$("#winner-wrap").hide();
-
+	$(".tile").off("mousedown ondragstart");
+	if (current) {
+		$(".tile").on("mousedown", () => {
+			$(".tile").removeClass("highlight");
+			$(".chess-dot").remove();
+			drawLastMove();
+		});
+	}
 	//I actually need this flag exclusively for castling out of check it kinda sucks
 	check = false;
 
@@ -148,7 +150,7 @@ const populateBoard = () => {
 
 		const piece = board[p.y][p.x];
 		$(`#${p.x}-${p.y}`).append(`<img src="${piece.image}" alt="${p.type}" draggable="true">`);
-		if (p.color === turn) {
+		if (current && p.color === turn) {
 			$(`#${p.x}-${p.y}`).css("cursor", "pointer");
 			$(`#${p.x}-${p.y}`).on("mousedown ondragstart", () => {
 				$(`#${p.x}-${p.y}`).addClass("highlight");
@@ -213,6 +215,7 @@ const drawLastMove = () => {
 };
 
 const updateUI = () => {
+	const current = maxGameNumber === gameNumber && maxTurnNumber === turnNumber;
 	if (turn === "white") {
 		$("#white-label").show();
 		$("#black-label").hide();
@@ -221,21 +224,24 @@ const updateUI = () => {
 		$("#white-label").hide();
 	}
 	//update icons bar
-	$("#number-icon").text(`Game ${viewGameNumber + 1} Turn ${viewTurnNumber + 1}`);
-	if (viewGameNumber === gameNumber && viewTurnNumber === turnNumber) {
+	if (current) {
 		//up to date
+		$("#number-icon").text(`Game ${gameNumber + 1} Turn ${turnNumber}`);
 		$("#date-icon").hide();
 		$("#lock-icon").hide();
 		$("flag-button").show();
 		$("#chess-board").css("outline", "none");
 	} else {
 		//in the past
+		$("#number-icon").text(`Game ${gameNumber + 1} Turn ${turnNumber}`);
 		$("#date-icon").show();
 		$("#date-icon").text(viewDate);
 		$("#lock-icon").show();
-		$("flag-button").hide();
+		$("#flag-button").hide();
 		$("#chess-board").css("outline", "4px dashed #808080");
 	}
+
+	updateButtons();
 };
 
 const displayWinner = (winner, resigned) => {
@@ -255,16 +261,20 @@ const displayWinner = (winner, resigned) => {
 		$("#checkmate-label").show();
 		$("#resignation-label").hide();
 	}
-	$("#new-game-button").off("click");
-	$("#new-game-button").on("click", () => {
-		postWin(winner);
-	});
+	if (maxGameNumber === gameNumber && maxTurnNumber === turnNumber) {
+		$("#new-game-button").off("click");
+		$("#new-game-button").on("click", () => {
+			postWin(winner);
+		});
+	}
 };
 
 const switchTurn = () => {
 	if (turn === "white") turn = "black";
 	else turn = "white";
 };
+
+const updateButtons = () => {};
 
 $((ready) => {
 	createBoard();
@@ -278,5 +288,25 @@ $((ready) => {
 	$("#flag-button").click(() => {
 		const winnerColor = turn === "white" ? "black" : "white";
 		displayWinner(winnerColor, true);
+	});
+
+	//timeline buttons
+	$("#double-forward-button").click(() => {
+		turnNumber = maxTurnNumber;
+		startListener();
+	});
+	$("#forward-button").click(() => {
+		turnNumber++;
+		if (turnNumber > maxTurnNumber) turnNumber = maxTurnNumber;
+		startListener();
+	});
+	$("#back-button").click(() => {
+		turnNumber--;
+		if (turnNumber < 1) turnNumber = 1;
+		startListener();
+	});
+	$("#double-back-button").click(() => {
+		turnNumber = 1;
+		startListener();
 	});
 });

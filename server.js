@@ -7,25 +7,26 @@ const updateWinHistory = () => {
 			endListener();
 
 			//get the number for our current game
-			gameNumber = winHistory.length;
-			viewGameNumber = gameNumber;
-			startListener();
+			maxGameNumber = winHistory.length;
 		} else {
 			//we have no games stored in the history
-			gameNumber = 0;
-			viewGameNumber = 0;
-			startListener();
+			maxGameNumber = 0;
 		}
+		gameNumber = maxGameNumber;
+		startListener();
 	});
 };
 
 const startListener = () => {
 	endListener();
+	const jump = turnNumber === undefined || turnNumber === maxTurnNumber;
 	if (gameNumber === undefined) return; //we don't know what we're actually looking for
+
 	listener = database.ref(`/games/${gameNumber}/`).on("value", (snapshot) => {
 		if (snapshot.exists()) {
 			const game = snapshot.val();
-			turnNumber = game.length - 1;
+			maxTurnNumber = game.length - 1;
+			if (jump) turnNumber = maxTurnNumber;
 			const frame = game[turnNumber];
 			pieces = frame.pieces;
 			turn = frame.turn;
@@ -33,11 +34,11 @@ const startListener = () => {
 			viewDate = frame.date ? frame.date : getDateString();
 		} else {
 			turnNumber = 0;
+			maxTurnNumber = 0;
 			viewDate = getDateString();
 			defaultSetup();
 			postData();
 		}
-		viewTurnNumber = turnNumber;
 		populateBoard();
 	});
 };
@@ -50,7 +51,7 @@ const endListener = () => {
 };
 
 const postData = () => {
-	if (turnNumber === undefined) turnNumber = -1;
+	if (turnNumber === undefined) turnNumber = 0;
 	const date = getDateString();
 	database.ref(`/games/${gameNumber}/${turnNumber + 1}/`).set({
 		pieces: pieces,
