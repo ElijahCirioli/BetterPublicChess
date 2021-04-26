@@ -20,6 +20,7 @@ const updateWinHistory = () => {
 const startListener = () => {
 	endListener();
 	const jump = turnNumber === undefined || turnNumber === maxTurnNumber;
+	let resign = false;
 
 	if (gameNumber === undefined) return; //we don't know what we're actually looking for
 
@@ -43,14 +44,19 @@ const startListener = () => {
 			turn = frame.turn;
 			lastMove = frame.lastMove;
 			viewDate = frame.date ? frame.date : getDateString();
+			resign = frame.resign;
 		} else {
 			turnNumber = 0;
 			maxTurnNumber = 0;
 			viewDate = getDateString();
 			defaultSetup();
-			postData();
+			postData(false);
 		}
 		populateBoard();
+		if (resign) {
+			const winnerColor = turn === "white" ? "black" : "white";
+			displayWinner(winnerColor, true);
+		}
 	});
 };
 
@@ -61,7 +67,7 @@ const endListener = () => {
 	}
 };
 
-const postData = () => {
+const postData = (resign) => {
 	if (turnNumber === undefined) turnNumber = 0;
 	const date = getDateString();
 	database.ref(`/games/${gameNumber}/${turnNumber + 1}/`).set({
@@ -69,6 +75,7 @@ const postData = () => {
 		turn: turn,
 		lastMove: lastMove,
 		date: date,
+		resign: resign,
 	});
 };
 

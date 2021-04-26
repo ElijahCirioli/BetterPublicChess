@@ -198,7 +198,7 @@ const drawMoves = (moves, piece) => {
 				switchTurn();
 				piece.move(move);
 				createPieceList();
-				postData();
+				postData(false);
 			});
 		$(`#${move.x}-${move.y}`)
 			.children(".chess-dot")
@@ -251,6 +251,7 @@ const displayWinner = (winner, resigned) => {
 	$("#winner-wrap").show();
 	$(".winner-label").hide();
 	$("#flag-button").hide();
+	$("#new-game-button").hide();
 	$(".tile").off("mousedown ondragstart");
 	if (winner === "white") {
 		$("#white-winner-label").show();
@@ -265,6 +266,7 @@ const displayWinner = (winner, resigned) => {
 		$("#resignation-label").hide();
 	}
 	if (maxGameNumber === gameNumber && maxTurnNumber === turnNumber) {
+		$("#new-game-button").show();
 		$("#new-game-button").off("click");
 		$("#new-game-button").on("click", () => {
 			postWin(winner);
@@ -299,8 +301,7 @@ $((ready) => {
 		$("#winner-wrap").css("opacity", "1");
 	});
 	$("#flag-button").click(() => {
-		const winnerColor = turn === "white" ? "black" : "white";
-		displayWinner(winnerColor, true);
+		postData(true);
 	});
 	$("#new-icon").click(() => {
 		$("#double-forward-button").click();
