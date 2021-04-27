@@ -93,7 +93,7 @@ const generateName = () => {
 };
 
 const updateName = () => {
-	const newName = $("#name-field").val();
+	const newName = $("#name-field").val().trim();
 	if (newName.length <= 3 || newName.length > 30) {
 		$("#name-field").addClass("bad-input");
 		return;
