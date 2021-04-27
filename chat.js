@@ -156,7 +156,7 @@ $((ready) => {
 			$("#messages-wrap").animate({ scrollTop: $("#messages-wrap").prop("scrollHeight") }, "slow");
 		}
 
-		$("#field-wrap").submit(function (e) {
+		$("form").submit(function (e) {
 			e.preventDefault();
 		});
 	});
