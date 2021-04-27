@@ -8,6 +8,7 @@
 		<link href="./style.css" rel="stylesheet" type="text/css" media="all" />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
 		<link
 			rel="stylesheet"
 			href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
@@ -15,50 +16,64 @@
 		/>
 	</head>
 	<body>
-		<div id="chess-wrap">
-			<div id="icons-wrap">
-				<p id="lock-icon" class="icon"><i class="fas fa-lock"></i></p>
-				<button id="flag-button">
-					<p id="flag-icon" class="icon"><i class="fas fa-flag"></i> Resign</p>
-				</button>
-				<p id="date-icon" class="icon"></p>
-				<div id="people-icon-wrap" class="icon"></div>
-				<p id="number-icon" class="icon"></p>
-				<p id="new-icon" class="icon" hidden><i class="fas fa-exclamation-circle"></i></p>
-			</div>
-			<div id="label-wrap">
-				<h3 class="chess-label" id="black-label">Black's turn</h3>
-				<h3 class="chess-label" id="white-label">White's turn</h3>
-			</div>
-			<div id="board-wrap">
-				<div id="chess-board"></div>
-				<div id="winner-wrap" hidden>
-					<h3 id="checkmate-label">Checkmate!</h3>
-					<h3 id="resignation-label">Resignation!</h3>
-					<h3 class="winner-label" id="white-winner-label">White wins</h3>
-					<h3 class="winner-label" id="black-winner-label">Black wins</h3>
-					<button id="new-game-button">New game</button>
-					<button id="eye-button"><i class="fas fa-eye"></i></button>
+		<div id="all-wrap">
+			<div id="chess-wrap">
+				<div id="icons-wrap">
+					<p id="lock-icon" class="icon"><i class="fas fa-lock"></i></p>
+					<button id="flag-button">
+						<p id="flag-icon" class="icon"><i class="fas fa-flag"></i> Resign</p>
+					</button>
+					<p id="date-icon" class="icon"></p>
+					<div id="people-icon-wrap" class="icon"></div>
+					<p id="number-icon" class="icon"></p>
+					<p id="new-icon" class="icon" hidden><i class="fas fa-exclamation-circle"></i></p>
+				</div>
+				<div id="label-wrap">
+					<h3 class="chess-label" id="black-label">Black's turn</h3>
+					<h3 class="chess-label" id="white-label">White's turn</h3>
+				</div>
+				<div id="board-wrap">
+					<div id="chess-board"></div>
+					<div id="winner-wrap" hidden>
+						<h3 id="checkmate-label">Checkmate!</h3>
+						<h3 id="resignation-label">Resignation!</h3>
+						<h3 class="winner-label" id="white-winner-label">White wins</h3>
+						<h3 class="winner-label" id="black-winner-label">Black wins</h3>
+						<button id="new-game-button">New game</button>
+						<button id="eye-button"><i class="fas fa-eye"></i></button>
+					</div>
+				</div>
+				<div id="controls-wrap">
+					<button id="double-back-button"><i class="fas fa-fast-backward"></i></button>
+					<button id="back-button"><i class="fas fa-step-backward"></i></button>
+					<button id="forward-button"><i class="fas fa-step-forward"></i></button>
+					<button id="double-forward-button"><i class="fas fa-fast-forward"></i></button>
+				</div>
+				<div id="history-wrap">
+					<h3 id="history-label">Past games</h3>
+					<div id="timeline-wrap">
+						<p class="timeline-label">Past</p>
+						<div id="scroll-container"></div>
+						<p class="timeline-label">Now</p>
+					</div>
 				</div>
 			</div>
-			<div id="controls-wrap">
-				<button id="double-back-button"><i class="fas fa-fast-backward"></i></button>
-				<button id="back-button"><i class="fas fa-step-backward"></i></button>
-				<button id="forward-button"><i class="fas fa-step-forward"></i></button>
-				<button id="double-forward-button"><i class="fas fa-fast-forward"></i></button>
-			</div>
-			<div id="history-wrap">
-				<h3 id="history-label">Past games</h3>
-				<div id="timeline-wrap">
-					<p class="timeline-label">Past</p>
-					<div id="scroll-container"></div>
-					<p class="timeline-label">Now</p>
-				</div>
+			<div id="chat-wrap">
+				<form id="name-wrap" autocomplete="off">
+					<input type="text" id="name-field" placeholder="Username" spellcheck="false" />
+				</form>
+				<div id="messages-wrap"></div>
+				<form id="field-wrap" autocomplete="off">
+					<input type="text" id="text-field" placeholder="Message" />
+					<input type="submit" id="submit-button" value="Send" />
+				</form>
 			</div>
 		</div>
 		<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-app.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-analytics.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-database.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
 		<script>
 			// Your web app's Firebase configuration
 			// For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -80,5 +95,6 @@
 		<script src="pieces.js"></script>
 		<script src="chess.js"></script>
 		<script src="server.js"></script>
+		<script src="chat.js"></script>
 	</body>
 </html>
