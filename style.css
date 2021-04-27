@@ -12,6 +12,7 @@ body {
 	flex-wrap: wrap;
 	justify-content: center;
 	max-width: 100%;
+	min-width: 450px;
 }
 #chess-wrap {
 	margin: 0 25px;
@@ -530,9 +531,4 @@ body {
 }
 .bad-input {
 	color: #f7513b !important;
-}
-@media only screen and (max-width: 400px) {
-	#all-wrap {
-		transform: scale(0.9);
-	}
 }
