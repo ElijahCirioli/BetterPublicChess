@@ -5,6 +5,7 @@ let board, turn;
 let winHistory, listener;
 let gameNumber, turnNumber;
 let maxGameNumber, maxTurnNumber, viewDate;
+let rotated = false;
 
 const testForCheck = (king) => {
 	for (let y = 0; y < 8; y++) {
@@ -358,5 +359,11 @@ $((ready) => {
 	$("#double-back-button").click(() => {
 		turnNumber = 1;
 		startListener();
+	});
+
+	$("#rotate-button").click(() => {
+		if (rotated) $("#chess-board").removeClass("rotated");
+		else $("#chess-board").addClass("rotated");
+		rotated = !rotated;
 	});
 });

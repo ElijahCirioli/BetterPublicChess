@@ -1,7 +1,6 @@
 const storage = firebase.firestore();
-let uid, username;
-let warned = false,
-	warningID;
+let uid, username, warningID;
+let warned = false;
 
 const signIn = () => {
 	firebase
@@ -30,7 +29,7 @@ const updateMessages = () => {
 	storage
 		.collection("messages")
 		.orderBy("date", "desc")
-		.limit("25")
+		.limit("30")
 		.onSnapshot(
 			(snapshot) => {
 				if (!snapshot.docChanges().empty) {
@@ -65,8 +64,14 @@ const updateMessages = () => {
 
 const sendMessage = () => {
 	const msg = $("#text-field").val();
-	if (msg.length === 0 || msg.length > 500) return;
-	if (username === undefined) return;
+	if (msg.length === 0 || username === undefined) return;
+	if (msg.length > 500) {
+		$("#messages-wrap").append(
+			`<div class="warning-message"><p>Character limit exceeded: ${msg.length}/500</p></div>`
+		);
+		return;
+	}
+	$("#text-field").val("");
 	storage
 		.collection("messages")
 		.add({
@@ -77,10 +82,10 @@ const sendMessage = () => {
 		})
 		.then(() => {
 			console.log("message sent successfully");
-			$("#text-field").val("");
 		})
 		.catch((error) => {
 			console.error("Error adding document: ", error);
+			$("#messages-wrap").append(`<div class="warning-message"><p>Message failed to send: ${msg}</p></div>`);
 		});
 };
 
@@ -104,7 +109,7 @@ const updateName = () => {
 
 const sendWarningMessage = () => {
 	$("#messages-wrap").append(
-		`<div class="warning-message"><p>This is NOT a secure messaging service. Please be kind and do not share personal information.</p></div>`
+		"<div class='warning-message'><p>This is NOT a secure messaging service. Please be kind and do not share personal information.</p></div>"
 	);
 };
 
