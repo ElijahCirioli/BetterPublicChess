@@ -155,10 +155,10 @@ $((ready) => {
 			sendWarningMessage();
 			$("#messages-wrap").animate({ scrollTop: $("#messages-wrap").prop("scrollHeight") }, "slow");
 		}
+	});
 
-		$("form").submit(function (e) {
-			e.preventDefault();
-		});
+	$("form").on("submit", function (e) {
+		e.preventDefault();
 	});
 
 	$("#name-field").on("keydown", () => {
