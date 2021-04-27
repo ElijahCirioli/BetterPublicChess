@@ -45,11 +45,14 @@ const updateMessages = () => {
 							const identifier = msg.date.seconds + msg.date.nanoseconds;
 							$("#messages-wrap").append(
 								`<div class="message ${type}">
-                                    <h3 class="message-name">${msg.name}</h3>
-                                    <p class="message-content">${msg.content}</p>
+                                    <h3 class="message-name"></h3>
+                                    <p class="message-content"></p>
                                     <p class="identifier" hidden>${identifier}</p>
                                 </div>`
 							);
+							//set as text to avoid XSS
+							$("#messages-wrap").children().last().children(".message-name").text(msg.name);
+							$("#messages-wrap").children().last().children(".message-content").text(msg.content);
 							if (identifier + "" === warningID) sendWarningMessage();
 						}
 					}
