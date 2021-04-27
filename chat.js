@@ -134,7 +134,7 @@ const displayNumPeople = () => {
 					let numPeople = 0;
 					Object.entries(snapshot.val()).forEach((person) => {
 						if (Date.now() - person[1].date > 15000) {
-							database.ref(`/${person[0]}`).remove();
+							database.ref(`/people/${person[0]}`).remove();
 						} else {
 							numPeople++;
 						}
