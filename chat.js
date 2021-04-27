@@ -16,7 +16,11 @@ const signIn = () => {
 	firebase.auth().onAuthStateChanged((user) => {
 		if (user) {
 			uid = user.uid;
+
 			updateMessages();
+			displayNumPeople();
+			setInterval(displayNumPeople, 10000); //sad that I have to do this but I don't think it's possible with listeners
+
 			$("#submit-button").click((e) => {
 				e.preventDefault();
 				sendMessage();
@@ -116,6 +120,30 @@ const sendWarningMessage = () => {
 	);
 };
 
+const displayNumPeople = () => {
+	database
+		.ref(`/people/${uid}/`)
+		.set({
+			date: Date.now(),
+		})
+		.then(() => {
+			database
+				.ref("/people/")
+				.once("value")
+				.then((snapshot) => {
+					let numPeople = 0;
+					Object.entries(snapshot.val()).forEach((person) => {
+						if (Date.now() - person[1].date > 15000) {
+							database.ref(`/${person[0]}`).remove();
+						} else {
+							numPeople++;
+						}
+					});
+					$("#num-people").text(numPeople);
+				});
+		});
+};
+
 $((ready) => {
 	generateName();
 	signIn();
@@ -200,7 +228,7 @@ const verbs = [
 	"acting",
 	"baking",
 	"building",
-	"calling",
+	"gaming",
 	"climbing",
 	"closing",
 	"crying",
