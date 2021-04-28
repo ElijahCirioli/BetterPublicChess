@@ -1,3 +1,11 @@
+/*************************************************
+ * This is not a very secure database but also
+ * it only holds information about chess games.
+ * I know you could easily grief it but I urge
+ * you not to. I don't want to force my users
+ * to create accounts and stuff. Thanks :)
+ *************************************************/
+
 const database = firebase.database();
 
 //listen to see the past winners
