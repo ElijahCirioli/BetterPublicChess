@@ -1,7 +1,9 @@
 const database = firebase.database();
 
+//listen to see the past winners
 const updateWinHistory = () => {
 	endListener();
+	//should we go to the new game when it starts
 	const jump = gameNumber === undefined || gameNumber === maxGameNumber;
 
 	database.ref("/win-history/").on("value", (snapshot) => {
@@ -18,8 +20,10 @@ const updateWinHistory = () => {
 	});
 };
 
+//listen for changes within our specific game
 const startListener = () => {
 	endListener();
+	//should we jump to the next available turn
 	const jump = turnNumber === undefined || turnNumber === maxTurnNumber;
 	let resign = false;
 
@@ -37,6 +41,7 @@ const startListener = () => {
 					$("#new-icon").css("color", "#ebebeb");
 				}, 1000);
 			}
+			//update variables
 			maxTurnNumber = game.length - 1;
 			if (jump) turnNumber = maxTurnNumber;
 
@@ -47,6 +52,7 @@ const startListener = () => {
 			viewDate = frame.date ? frame.date : getDateString();
 			resign = frame.resign;
 		} else {
+			//default everything
 			turnNumber = 0;
 			maxTurnNumber = 0;
 			viewDate = getDateString();
@@ -54,6 +60,7 @@ const startListener = () => {
 			postData(false);
 		}
 		populateBoard();
+		//check if the other person resigned
 		if (resign) {
 			const winnerColor = turn === "white" ? "black" : "white";
 			displayWinner(winnerColor, true);
@@ -61,6 +68,7 @@ const startListener = () => {
 	});
 };
 
+//stop listening
 const endListener = () => {
 	if (listener) {
 		database.ref(`/games/${gameNumber}/`).off("value", listener);
@@ -68,6 +76,7 @@ const endListener = () => {
 	}
 };
 
+//post a frame to the databse
 const postData = (resign) => {
 	if (turnNumber === undefined) turnNumber = 0;
 	const date = getDateString();
@@ -80,12 +89,14 @@ const postData = (resign) => {
 	});
 };
 
+//post a win to the history
 const postWin = (winner) => {
 	let updates = {};
 	updates[`${gameNumber}/`] = winner;
 	database.ref("win-history").update(updates);
 };
 
+//create a json list of pieces
 const createPieceList = () => {
 	pieces = [];
 	for (let y = 0; y < 8; y++) {
@@ -98,6 +109,7 @@ const createPieceList = () => {
 	}
 };
 
+//return the date in Month/Day/Year
 const getDateString = () => {
 	const d = new Date();
 	const str = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;

@@ -1,3 +1,4 @@
+//parent class
 class Piece {
 	constructor(x, y, hasMoved, color) {
 		this.x = x;
@@ -8,20 +9,21 @@ class Piece {
 		this.type = "";
 	}
 
+	//return all possible moves
 	getMoves() {
 		return [];
 	}
 
-	removeCheckMoves(moves, king) {
-		//find king if needed
-		if (!king) {
-			for (let y = 0; y < 8; y++) {
-				for (let x = 0; x < 8; x++) {
-					const piece = board[y][x];
-					if (piece instanceof King && piece.color === this.color) {
-						king = piece;
-						break;
-					}
+	//remove moves that would cause this color to be in check
+	removeCheckMoves(moves) {
+		//find king
+		let king;
+		for (let y = 0; y < 8; y++) {
+			for (let x = 0; x < 8; x++) {
+				const piece = board[y][x];
+				if (piece instanceof King && piece.color === this.color) {
+					king = piece;
+					break;
 				}
 			}
 		}
@@ -29,6 +31,7 @@ class Piece {
 		//remove check moves
 		const backup = { x: this.x, y: this.y };
 		for (let i = 0; i < moves.length; i++) {
+			//pretend to make all possible moves on a copy board
 			const m = { ...moves[i] };
 			const copy = copyBoard();
 
@@ -37,6 +40,7 @@ class Piece {
 			this.x = m.x;
 			this.y = m.y;
 			if (this.type === "king") king = this;
+			//see if we're in check now
 			if (testForCheck(king)) {
 				moves.splice(i, 1);
 				i--;
@@ -57,6 +61,7 @@ class Piece {
 		}
 	}
 
+	//see if a move is on the board
 	canMove(m) {
 		if (m.x < 0 || m.x > 7) return false;
 		if (m.y < 0 || m.y > 7) return false;
@@ -65,6 +70,7 @@ class Piece {
 		return target.color !== this.color;
 	}
 
+	//see if a move hit's an enemy
 	isEnemy(m) {
 		if (m.x < 0 || m.x > 7) return false;
 		if (m.y < 0 || m.y > 7) return false;
@@ -73,6 +79,7 @@ class Piece {
 		return target.color !== this.color;
 	}
 
+	//get all moves in a direction until it hits a wall
 	getLineMoves(moves, dir) {
 		for (let i = 1; true; i++) {
 			const m = { x: this.x + i * dir.x, y: this.y + i * dir.y };
@@ -84,6 +91,7 @@ class Piece {
 		return moves;
 	}
 
+	//execute a given move
 	move(m) {
 		lastMove.from = { x: this.x, y: this.y };
 		lastMove.to = { x: m.x, y: m.y };

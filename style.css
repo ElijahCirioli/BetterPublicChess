@@ -15,7 +15,7 @@ body {
 	min-width: 450px;
 }
 #chess-wrap {
-	margin: 0 25px;
+	margin: 0 25px 20px 25px;
 	width: 400px;
 }
 #chess-board {
@@ -500,6 +500,7 @@ body {
 	color: #ebebeb;
 	font-size: 14px;
 	text-align: center;
+	-webkit-appearance: none;
 }
 #submit-button:hover {
 	transform: scale(1.05);

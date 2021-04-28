@@ -1,17 +1,21 @@
-let check = false;
-let pieces = [];
-let lastMove = { to: { x: -1, y: -1 }, from: { x: -1, y: -1 } };
-let board, turn;
-let winHistory, listener;
-let gameNumber, turnNumber;
-let maxGameNumber, maxTurnNumber, viewDate;
-let rotated = false;
+let check = false; //is the current player in check (exclusively for castling)
+let pieces = []; //all the pieces
+let lastMove = { to: { x: -1, y: -1 }, from: { x: -1, y: -1 } }; //the last move to be highlighted
+let board, turn; //the board array, who's turn it is
+let winHistory, listener; //who won all the past games, the listener for updating the game
+let gameNumber, turnNumber; //the game and turn number that we're currently in
+let maxGameNumber, maxTurnNumber, viewDate; //the maximum possible game and turn number and the date to display
+let rotated = false; //did the player rotate 180 degrees?
 
+//return if the given king is in check
 const testForCheck = (king) => {
+	//for every square on the board
 	for (let y = 0; y < 8; y++) {
 		for (let x = 0; x < 8; x++) {
 			const piece = board[y][x];
+			//if it's an enemy piece
 			if (piece instanceof Piece && piece.color !== king.color) {
+				//see if any of its moves can get the king
 				const moves = piece.getMoves();
 				for (const m of moves) {
 					if (m.x === king.x && m.y === king.y) return true;
@@ -22,12 +26,15 @@ const testForCheck = (king) => {
 	return false;
 };
 
+//return whether the given king is in checkmate
 const testForCheckmate = (king) => {
 	/* assumes king is already in check */
 	for (let y = 0; y < 8; y++) {
 		for (let x = 0; x < 8; x++) {
 			const piece = board[y][x];
+			//for every piece of our own color
 			if (piece instanceof Piece && piece.color === king.color) {
+				//see if it can make any legal moves
 				const moves = piece.getMoves();
 				piece.removeCheckMoves(moves);
 				if (moves.length > 0) return false;
@@ -37,6 +44,7 @@ const testForCheckmate = (king) => {
 	return true;
 };
 
+//return a deep copy of the board object
 const copyBoard = () => {
 	const copy = [];
 	for (let y = 0; y < 8; y++) {
@@ -52,6 +60,7 @@ const copyBoard = () => {
 	return copy;
 };
 
+//the standard chess setup
 const defaultSetup = () => {
 	pieces = [];
 	pieces.push({ x: 3, y: 0, color: "black", type: "queen", hasMoved: false });
@@ -84,6 +93,7 @@ const defaultSetup = () => {
 	lastMove = { from: { x: -1, y: -1 }, to: { x: -1, y: -1 } };
 };
 
+//create the html board
 const createBoard = () => {
 	const board = $("#chess-board");
 	board.empty();
@@ -96,6 +106,8 @@ const createBoard = () => {
 	}
 };
 
+//our heavy duty function (I could probably break this up)
+//populate the html board with pieces
 const populateBoard = () => {
 	//are we viewing an up to date turn
 	const current = maxGameNumber === gameNumber && maxTurnNumber === turnNumber;
@@ -150,14 +162,16 @@ const populateBoard = () => {
 				break;
 		}
 
+		//add the piece images
 		const piece = board[p.y][p.x];
 		$(`#${p.x}-${p.y}`).append(`<img src="${piece.image}" alt="${p.type}" draggable="true">`);
 		if (current && p.color === turn) {
+			//make it movable
 			$(`#${p.x}-${p.y}`).css("cursor", "pointer");
 			$(`#${p.x}-${p.y}`).on("mousedown ondragstart", () => {
 				$(`#${p.x}-${p.y}`).addClass("highlight");
 				const moves = piece.getMoves();
-				piece.removeCheckMoves(moves, undefined);
+				piece.removeCheckMoves(moves);
 				drawMoves(moves, piece);
 			});
 		}
@@ -182,16 +196,20 @@ const populateBoard = () => {
 	updateUI();
 };
 
+//draw dots for all the possible moves
 const drawMoves = (moves, piece) => {
 	for (const move of moves) {
 		const target = board[move.y][move.x];
+		//decide what color to draw dot
 		let color = "";
 		if (target !== 0) color = "red";
 		else {
 			//en passant red highlight
 			if (piece.type === "pawn" && piece.x !== move.x) color = "red";
 		}
+		//add dot
 		$(`#${move.x}-${move.y}`).append(`<div class="chess-dot ${color}"></div>`);
+		//add click and drag events
 		$(`#${move.x}-${move.y}`)
 			.children(".chess-dot")
 			.on("mousedown drop", (e) => {
@@ -209,6 +227,7 @@ const drawMoves = (moves, piece) => {
 	}
 };
 
+//highlight the last move
 const drawLastMove = () => {
 	if (lastMove && lastMove.to.x >= 0) {
 		$(`#${lastMove.to.x}-${lastMove.to.y}`).addClass("highlight");
@@ -216,8 +235,11 @@ const drawLastMove = () => {
 	}
 };
 
+//update the UI elements
 const updateUI = () => {
+	//are we up to date
 	const current = maxGameNumber === gameNumber && maxTurnNumber === turnNumber;
+	//who's turn is it
 	if (turn === "white") {
 		$("#white-label").show();
 		$("#black-label").hide();
@@ -248,17 +270,20 @@ const updateUI = () => {
 	displayWinHistory();
 };
 
+//display the game over screen
 const displayWinner = (winner, resigned) => {
 	$("#winner-wrap").show();
 	$(".winner-label").hide();
 	$("#flag-button").hide();
 	$("#new-game-button").hide();
 	$(".tile").off("mousedown ondragstart");
+	//who won
 	if (winner === "white") {
 		$("#white-winner-label").show();
 	} else {
 		$("#black-winner-label").show();
 	}
+	//is this a checkmate or resignation
 	if (resigned) {
 		$("#checkmate-label").hide();
 		$("#resignation-label").show();
@@ -266,7 +291,9 @@ const displayWinner = (winner, resigned) => {
 		$("#checkmate-label").show();
 		$("#resignation-label").hide();
 	}
+	//see if we're in the past or not
 	if (maxGameNumber === gameNumber && maxTurnNumber === turnNumber) {
+		//display button to create a new game
 		$("#new-game-button").show();
 		$("#new-game-button").off("click");
 		$("#new-game-button").on("click", () => {
@@ -275,11 +302,13 @@ const displayWinner = (winner, resigned) => {
 	}
 };
 
+//toggle whose turn it is
 const switchTurn = () => {
 	if (turn === "white") turn = "black";
 	else turn = "white";
 };
 
+//update the time travel buttons
 const updateButtons = () => {
 	$("#controls-wrap").children("button").removeClass("disabled");
 	if (turnNumber === maxTurnNumber) {
@@ -292,9 +321,11 @@ const updateButtons = () => {
 	}
 };
 
+//display the colors of past wins
 const displayWinHistory = () => {
 	$("#scroll-container").empty();
 	$("#scroll-container").append(`<div class="past-game current-game"></div>`);
+	//bring ourselves up to date
 	$("#scroll-container")
 		.children()
 		.last()
@@ -305,6 +336,7 @@ const displayWinHistory = () => {
 			maxTurnNumber = 1;
 			startListener();
 		});
+	//all the old games
 	for (let i = winHistory.length - 1; i >= 0; i--) {
 		const game = winHistory[i];
 		$("#scroll-container").append(`<div class="past-game past-${game}"></div>`);
@@ -319,6 +351,7 @@ const displayWinHistory = () => {
 				startListener();
 			});
 	}
+	//highlight the selected game
 	$("#scroll-container")
 		.children()
 		.eq(winHistory.length - gameNumber)
@@ -328,15 +361,20 @@ const displayWinHistory = () => {
 $((ready) => {
 	createBoard();
 
+	//reveal what's behind game over screen
 	$("#eye-button").on("mousedown", () => {
 		$("#winner-wrap").css("opacity", "0");
 	});
 	$("#winner-wrap").on("mouseup mouseleave", () => {
 		$("#winner-wrap").css("opacity", "1");
 	});
+
+	//resignation button
 	$("#flag-button").click(() => {
 		postData(true);
 	});
+
+	//click notification to jump to present
 	$("#new-icon").click(() => {
 		$("#double-forward-button").click();
 	});
@@ -361,6 +399,7 @@ $((ready) => {
 		startListener();
 	});
 
+	//rotate board 180 degrees
 	$("#rotate-button").click(() => {
 		if (rotated) $("#chess-board").removeClass("rotated");
 		else $("#chess-board").addClass("rotated");
