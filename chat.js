@@ -17,7 +17,9 @@ const signIn = () => {
 		if (user) {
 			uid = user.uid;
 
+			purgeOldMessages();
 			updateMessages();
+
 			displayNumPeople();
 			setInterval(displayNumPeople, 10000); //sad that I have to do this but I don't think it's possible with listeners
 
@@ -27,6 +29,20 @@ const signIn = () => {
 			});
 		}
 	});
+};
+
+const purgeOldMessages = () => {
+	storage
+		.collection("messages")
+		.get()
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				const ms = doc.data().date.toDate();
+				if (Date.now() - ms >= 43200000) {
+					doc.ref.delete();
+				}
+			});
+		});
 };
 
 const updateMessages = () => {
@@ -43,7 +59,7 @@ const updateMessages = () => {
 						const doc = snapshot.docs[i];
 						const msg = doc.data();
 						//make sure message is from last 12 hours
-						if (msg.date && Date.now() - msg.date.seconds * 1000 < 43200000) {
+						if (msg.date && Date.now() - msg.date.toDate() < 43200000) {
 							let type = "other";
 							if (msg.uid === uid) type = "self";
 							const identifier = msg.date.seconds + msg.date.nanoseconds;
